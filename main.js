@@ -1,33 +1,40 @@
-fetch(
-  "http://www.recipepuppy.com/api/?q=omelet"
-)
-  .then(function(response) {
-    if (response.status !== 200) {
-      console.log(response.status);
 
-      return;
-    }
-    response.json().then(function(data) {
-      console.log("test", response.url);
-      console.log(data)
+function submit() {
+  var input = document.getElementById('search').value
+  fetch(
+    "http://www.recipepuppy.com/api/?q=" + `${input}`
+  )
+    .then(function(response) {
+      if (response.status !== 200) {
+        console.log(response.status);
+
+        return;
+      }
+      response.json().then(function(data) {
+        console.log("test", response.url);
+        displayInfo(data)
+      });
+    })
+    .catch(function(err) {
+      console.log("Fetch Error :-S", err);
     });
-  })
-  .catch(function(err) {
-    console.log("Fetch Error :-S", err);
-  });
 
-//   $(function() {
-//     var $cells = $("td");
+  let container = document.querySelector('#container')
 
-//     $("#search").keyup(function() {
-//         var val = $.trim(this.value).toUpperCase();
-//         if (val === "")
-//             $cells.parent().show();
-//         else {
-//             $cells.parent().hide();
-//             $cells.filter(function() {
-//                 return -1 != $(this).text().toUpperCase().indexOf(val);
-//             }).parent().show();
-//         }
-//     });
-// });​
+  function displayInfo(data){
+    let info = ''
+      data.results.map(function(item){
+        info += `
+          <div class="recipeContainer">
+            <a href="${item.href}">
+              <div class="recipe">
+                <img src="${item.thumbnail}"/>
+                <p class="title">${item.title}</p>
+              </div>
+            </a>
+          </div>
+        ` 
+      container.innerHTML = info
+    })
+  }
+}
